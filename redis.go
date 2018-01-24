@@ -2,7 +2,8 @@ package main
 
 import (
 	"github.com/garyburd/redigo/redis"
-	"strconv"
+	"log"
+	"os"
 )
 
 var (
@@ -10,11 +11,13 @@ var (
 	rPool *redis.Pool
 )
 
-func InitRedis(addr string, port int) {
+func InitRedis() {
+
+	redisUrl := os.Getenv("REDIS_URL")
 
 	rPool = &redis.Pool{
 		Dial: func() (redis.Conn, error) {
-			return redis.Dial("tcp", addr+":"+strconv.Itoa(port))
+			return redis.Dial("tcp", redisUrl)
 		},
 	}
 }
@@ -25,6 +28,7 @@ func RedisGet(key string) (string, error) {
 
 	err := conn.Err()
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 

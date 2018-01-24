@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-	InitRedis(DEFAULT_REDIS_SERVER_HOST, DEFAULT_REDIS_SERVER_PORT)
+	InitRedis()
 
 	NewCache(DEFAULT_CACHE_CAPACITY)
 

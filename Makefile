@@ -30,6 +30,6 @@ clean:
 
 # Test the project
 test: clean build
-	go test -v
+	docker-compose up
 
 .PHONY: clean install
