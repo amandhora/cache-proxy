@@ -44,12 +44,12 @@ type Cache struct {
 	lruList      *list.List         // Double link list maintaining least recently used order
 }
 
-func NewCache(capacity int) {
+func InitCache(capacity int, expPeriod time.Duration) {
 
 	proxyCache = &Cache{
 		maxCapacity:  capacity,
 		expiryFactor: EVICT_ENTRIES_PERCENT,
-		expiryPeriod: DEFAULT_CACHE_ENTRY_TTL,
+		expiryPeriod: expPeriod,
 		data:         make(map[string]Element, capacity),
 		lruList:      list.New(),
 	}

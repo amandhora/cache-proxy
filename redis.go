@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/garyburd/redigo/redis"
 	"log"
-	"os"
 )
 
 var (
@@ -11,9 +10,7 @@ var (
 	rPool *redis.Pool
 )
 
-func InitRedis() {
-
-	redisUrl := os.Getenv("REDIS_URL")
+func InitRedis(redisUrl string) {
 
 	rPool = &redis.Pool{
 		Dial: func() (redis.Conn, error) {

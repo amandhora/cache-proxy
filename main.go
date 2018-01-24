@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -8,11 +9,14 @@ import (
 
 func main() {
 
-	InitRedis()
+	conf := LoadConfigParams()
+	log.Println(conf)
 
-	NewCache(DEFAULT_CACHE_CAPACITY)
+	InitRedis(conf.redisUrl)
 
-	InitProxy(DEFAULT_PROXY_LISTEN_PORT)
+	InitCache(conf.cacheCapacity, conf.cacheExpiry)
+
+	InitProxy(conf.proxyPort)
 
 	// Catch Ctrl + C
 	signalChan := make(chan os.Signal, 1)

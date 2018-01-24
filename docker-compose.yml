@@ -11,6 +11,9 @@ services:
             - redis
         environment:
             REDIS_URL: redis:6379
+            PROXY_PORT: 8080
+            CACHE_CAP: 1000
+            CACHE_TTL_SEC: 600
 
     redis:
         image: redis:alpine
