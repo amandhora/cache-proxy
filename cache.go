@@ -12,6 +12,7 @@ const (
 
 var (
 	proxyCache *Cache
+	Wrk        []Worker
 )
 
 //
@@ -44,9 +45,9 @@ type Cache struct {
 	lruList      *list.List         // Double link list maintaining least recently used order
 }
 
-func InitCache(capacity int, expPeriod time.Duration) {
+func NewCache(capacity int, expPeriod time.Duration) *Cache {
 
-	proxyCache = &Cache{
+	return &Cache{
 		maxCapacity:  capacity,
 		expiryFactor: EVICT_ENTRIES_PERCENT,
 		expiryPeriod: expPeriod,
@@ -194,6 +195,57 @@ func (c *Cache) Get(key string) string {
 	return data
 }
 
-func ProxyCacheGet(key string) string {
-	return proxyCache.Get(key)
+//
+// Workers to support concurrent processing of http requests
+//
+type Worker struct {
+	jobQueue chan Job
+	quit     chan bool
+}
+
+func NewWorker(queue chan Job) Worker {
+
+	return Worker{
+		jobQueue: queue,
+		quit:     make(chan bool),
+	}
+
+}
+
+func (w *Worker) Start() {
+
+	for {
+		select {
+		case job := <-w.jobQueue:
+			value := proxyCache.Get(job.k)
+			SendGetRsp(job, value)
+
+		case <-w.quit:
+			return
+		}
+	}
+}
+
+func (w *Worker) Stop() {
+	w.quit <- true
+}
+
+func StartCacheHandlers(conf *Config, jobQueue chan Job) {
+
+	proxyCache = NewCache(conf.cacheCapacity, conf.cacheExpiry)
+
+	Wrk = make([]Worker, conf.parallelReqCnt)
+
+	// Number of job that are being concurrently procesed
+	for i := 0; i < conf.parallelReqCnt; i++ {
+		Wrk[i] = NewWorker(jobQueue)
+		go Wrk[i].Start()
+	}
+
+}
+
+func StopCacheHandlers() {
+	for i := 0; i < len(Wrk); i++ {
+		Wrk[i].Stop()
+	}
 }

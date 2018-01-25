@@ -7,27 +7,29 @@ import (
 )
 
 const (
-	DEFAULT_REDIS_URL           string        = "localhost:7777"
-	DEFAULT_PROXY_LISTEN_PORT   int           = 8080
-	DEFAULT_CACHE_CAPACITY      int           = 1000
-	DEFAULT_CACHE_ENTRY_TTL     time.Duration = 600 * time.Second // 10 min
-	DEFAULT_PROXY_PARALLEL_CONN int           = 1
+	DEFAULT_REDIS_URL          string        = "localhost:6379"
+	DEFAULT_PROXY_LISTEN_PORT  int           = 8080
+	DEFAULT_CACHE_CAPACITY     int           = 1000
+	DEFAULT_CACHE_ENTRY_TTL    time.Duration = 600 * time.Second // 10 min
+	DEFAULT_PROXY_PARALLEL_REQ int           = 10
 )
 
-type Conf struct {
-	redisUrl      string
-	proxyPort     int
-	cacheCapacity int
-	cacheExpiry   time.Duration
+type Config struct {
+	redisUrl       string
+	proxyPort      int
+	cacheCapacity  int
+	cacheExpiry    time.Duration
+	parallelReqCnt int
 }
 
-func LoadConfigParams() *Conf {
+func LoadConfigParams() *Config {
 
-	conf := &Conf{
-		redisUrl:      DEFAULT_REDIS_URL,
-		proxyPort:     DEFAULT_PROXY_LISTEN_PORT,
-		cacheCapacity: DEFAULT_CACHE_CAPACITY,
-		cacheExpiry:   DEFAULT_CACHE_ENTRY_TTL,
+	conf := &Config{
+		redisUrl:       DEFAULT_REDIS_URL,
+		proxyPort:      DEFAULT_PROXY_LISTEN_PORT,
+		cacheCapacity:  DEFAULT_CACHE_CAPACITY,
+		cacheExpiry:    DEFAULT_CACHE_ENTRY_TTL,
+		parallelReqCnt: DEFAULT_PROXY_PARALLEL_REQ,
 	}
 
 	redis := os.Getenv("REDIS_URL")

@@ -14,10 +14,14 @@ func main() {
 
 	InitRedis(conf.redisUrl)
 
-	InitCache(conf.cacheCapacity, conf.cacheExpiry)
+	log.Println("redis done")
+	jobQueue := make(chan Job, conf.parallelReqCnt)
+	StartCacheHandlers(conf, jobQueue)
 
-	InitProxy(conf.proxyPort)
+	log.Println("cache done")
+	InitProxy(conf.proxyPort, jobQueue)
 
+	log.Println("initproxy done")
 	// Catch Ctrl + C
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
@@ -31,4 +35,6 @@ func main() {
 		//handle SIGTERM
 	}
 
+	StopCacheHandlers()
+	log.Println("done")
 }
