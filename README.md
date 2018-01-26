@@ -37,6 +37,19 @@ Redis pool is configured to streamline the redis access. Several options are rea
 
 ## INSTRUCTION
 
+### Prerequisite
+
+The software build and runs on a modern Linux distribution or Mac OS installation, 
+
+The system should have the following software installed:
+```console
+make
+docker
+docker-compose
+Bash
+```
+
+### Steps
 ```console
 # git clone https://github.com/amandhora/cache-proxy.git
 # cd cache-proxy
