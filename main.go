@@ -12,16 +12,18 @@ func main() {
 	conf := LoadConfigParams()
 	log.Println(conf)
 
+	// Initialize redis connection pool
 	InitRedis(conf.redisUrl)
 
-	log.Println("redis done")
-	jobQueue := make(chan Job, conf.parallelReqCnt)
-	StartCacheHandlers(conf, jobQueue)
+	// Create http Job queue
+	jobQueue := make(chan Job, conf.maxConn)
 
-	log.Println("cache done")
+	// Initialize the LRU cache
+	StartLruCacheHandlers(conf, jobQueue)
+
+	// Start the proxy at last
 	InitProxy(conf.proxyPort, jobQueue)
 
-	log.Println("initproxy done")
 	// Catch Ctrl + C
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
@@ -35,6 +37,5 @@ func main() {
 		//handle SIGTERM
 	}
 
-	StopCacheHandlers()
-	log.Println("done")
+	StopLruCacheHandlers()
 }

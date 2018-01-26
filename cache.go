@@ -230,7 +230,7 @@ func (w *Worker) Stop() {
 	w.quit <- true
 }
 
-func StartCacheHandlers(conf *Config, jobQueue chan Job) {
+func StartLruCacheHandlers(conf *Config, jobQueue chan Job) {
 
 	proxyCache = NewCache(conf.cacheCapacity, conf.cacheExpiry)
 
@@ -244,7 +244,7 @@ func StartCacheHandlers(conf *Config, jobQueue chan Job) {
 
 }
 
-func StopCacheHandlers() {
+func StopLruCacheHandlers() {
 	for i := 0; i < len(Wrk); i++ {
 		Wrk[i].Stop()
 	}

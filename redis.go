@@ -21,6 +21,7 @@ func InitRedis(redisUrl string) {
 
 func RedisGet(key string) (string, error) {
 
+	// This can be taken out of this function
 	conn := rPool.Get()
 
 	err := conn.Err()

@@ -2,7 +2,6 @@ package main
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -15,7 +14,7 @@ type Job struct {
 
 var JobQueue chan Job
 
-func handleReq(w http.ResponseWriter, r *http.Request) {
+func HandleReq(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "GET" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -26,7 +25,6 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 	keys := r.URL.Query()
 
 	if len(keys) < 1 {
-		log.Println("Url Param 'key' is empty")
 
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -47,10 +45,15 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
+	w.WriteHeader(http.StatusBadRequest)
+	return
 }
 
 func SendGetRsp(j Job, value string) {
 
+	// Write headers and data
+	j.w.WriteHeader(http.StatusOK)
 	j.w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	io.WriteString(j.w, value)
 
@@ -62,7 +65,7 @@ func InitProxy(port int, queue chan Job) {
 
 	JobQueue = queue
 
-	http.HandleFunc("/proxy", handleReq)
+	http.HandleFunc("/proxy", HandleReq)
 	http.ListenAndServe(":"+strconv.Itoa(port), http.DefaultServeMux)
 
 }
