@@ -2,6 +2,7 @@ package main
 
 import (
 	"container/list"
+	//"log"
 	"sync"
 	"time"
 )
@@ -217,6 +218,7 @@ func (w *Worker) Start() {
 	for {
 		select {
 		case job := <-w.jobQueue:
+			//log.Println("Got:", job.k)
 			value := proxyCache.Get(job.k)
 			SendGetRsp(job, value)
 
