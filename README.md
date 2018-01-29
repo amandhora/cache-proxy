@@ -51,6 +51,7 @@ Bash
 
 ### Steps
 ```console
+# cd $GOPATH/src
 # git clone https://github.com/amandhora/cache-proxy.git
 # cd cache-proxy
 # make test
