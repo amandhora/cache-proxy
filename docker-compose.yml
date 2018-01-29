@@ -1,7 +1,17 @@
 version: "3"
 
 services:
-    app:
+    test:
+        image: golang:latest
+        volumes:
+            - ./http_test:/go/src/github.com/amandhora/cache-proxy/http_test
+        working_dir: /go/src/github.com/amandhora/cache-proxy/http_test
+        command: go run main.go
+        depends_on:
+            - proxy
+        environment:
+            PROXY_URL: proxy:8080
+    proxy:
         build: .
         volumes:
             - .:/go/src/github.com/amandhora/cache-proxy
