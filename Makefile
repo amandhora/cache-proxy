@@ -19,6 +19,6 @@ clean:
 
 # Test the project
 test: clean build
-	docker-compose up
+	docker run --rm -it -w /go/src/mycode -v $(CURDIR):/go/src/mycode -u 1000:1000 golang:latest go test -v
 
 .PHONY: clean install
