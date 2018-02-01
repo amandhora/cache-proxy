@@ -18,7 +18,7 @@ clean:
 	@echo "Cleanup complete!"
 
 # Test the project
-test: clean build
+test: clean
 	docker run --rm -it -w /go/src/mycode -v $(CURDIR):/go/src/mycode -u 1000:1000 golang:latest go test -v
 	docker-compose build && docker-compose run test
 	docker-compose stop && docker-compose rm -f
